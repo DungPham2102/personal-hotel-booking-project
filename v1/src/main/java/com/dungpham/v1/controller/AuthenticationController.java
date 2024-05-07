@@ -1,11 +1,9 @@
 package com.dungpham.v1.controller;
 
 
-import com.dungpham.v1.dto.JwtAuthenticationResponse;
-import com.dungpham.v1.dto.RefreshTokenRequest;
-import com.dungpham.v1.dto.SignUpRequest;
-import com.dungpham.v1.dto.SigninRequest;
+import com.dungpham.v1.dto.*;
 import com.dungpham.v1.entity.User;
+import com.dungpham.v1.repository.UserRepository;
 import com.dungpham.v1.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +12,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final UserRepository userRepository;
 
+    // đăng ký tài khoản Customer
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@RequestBody SignUpRequest signUpRequest){
+    public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest){
+        // Kiểm tra xem email đã tồn tại trong hệ thống chưa
+        Optional<User> existingUser = userRepository.findByEmail(signUpRequest.getEmail());
+        if (existingUser.isPresent()) {
+            ErrorResponse errorResponse = new ErrorResponse("Email đã được sử dụng!");
+            return ResponseEntity.status(400).body(errorResponse);
+        }
+
         return ResponseEntity.ok(authenticationService.signup(signUpRequest));
     }
 
