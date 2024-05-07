@@ -1,5 +1,6 @@
 package com.dungpham.v1.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/customer")
 @RequiredArgsConstructor
-public class UserController {
+public class CustomerController {
 
     @GetMapping
     public ResponseEntity<String> sayHello(){
-        return ResponseEntity.ok("Hello User");
+        return ResponseEntity.ok("Hello Customer");
     }
 
 }

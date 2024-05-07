@@ -33,8 +33,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User signup(SignUpRequest signUpRequest){
         User user = new User();
 
-        user.setFirstname(signUpRequest.getFirstName());
-        user.setLastname(signUpRequest.getLastName());
+        user.setFirstName(signUpRequest.getFirstName());
+        user.setLastName(signUpRequest.getLastName());
         user.setEmail(signUpRequest.getEmail());
         user.setRole(Role.EMPLOYEE);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
