@@ -25,6 +25,12 @@ public class BookedRoom {
     @Column(name = "check_Out")
     private LocalDate checkOutDate;
 
+    @Column(name = "total_guest")
+    private int totalNumOfGuest;
+
+    @Column(name = "confirmation_Code")
+    private String bookingConfirmationCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
@@ -32,5 +38,9 @@ public class BookedRoom {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "guest_id")
     private User user;
+
+    public void setBookingConfirmationCode(String bookingConfirmationCode) {
+        this.bookingConfirmationCode = bookingConfirmationCode;
+    }
 
 }
