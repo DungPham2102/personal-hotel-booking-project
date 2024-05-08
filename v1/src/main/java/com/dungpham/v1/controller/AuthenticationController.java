@@ -28,8 +28,8 @@ public class AuthenticationController {
         // Kiểm tra xem email đã tồn tại trong hệ thống chưa
         Optional<User> existingUser = userRepository.findByEmail(signUpRequest.getEmail());
         if (existingUser.isPresent()) {
-            ErrorResponse errorResponse = new ErrorResponse("Email đã được sử dụng!");
-            return ResponseEntity.status(400).body(errorResponse);
+            MessageResponse messageResponse = new MessageResponse("Email đã được sử dụng!");
+            return ResponseEntity.status(400).body(messageResponse);
         }
 
         return ResponseEntity.ok(authenticationService.signup(signUpRequest));

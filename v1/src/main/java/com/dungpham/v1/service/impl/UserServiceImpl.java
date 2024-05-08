@@ -1,7 +1,7 @@
 package com.dungpham.v1.service.impl;
 
 
-import com.dungpham.v1.dto.ErrorResponse;
+import com.dungpham.v1.dto.MessageResponse;
 import com.dungpham.v1.dto.SignUpRequest;
 import com.dungpham.v1.entity.Role;
 import com.dungpham.v1.entity.User;
@@ -65,6 +65,8 @@ public class UserServiceImpl implements UserService {
         boolean exists = userRepository.existsById(id);
         if (!exists) {
             throw new RuntimeException("User not found with id " + id);
+
+
         }
         userRepository.deleteById(id);
     }
@@ -74,8 +76,8 @@ public class UserServiceImpl implements UserService {
         // Kiểm tra xem email đã tồn tại trong hệ thống chưa
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
-            ErrorResponse errorResponse = new ErrorResponse("Email đã được sử dụng!");
-            return ResponseEntity.status(400).body(errorResponse);
+            MessageResponse messageResponse = new MessageResponse("Email đã được sử dụng!");
+            return ResponseEntity.status(400).body(messageResponse);
         }
         User newUser = new User();
         newUser.setEmail(user.getEmail());

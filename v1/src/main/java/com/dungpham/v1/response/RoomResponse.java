@@ -6,6 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.tomcat.util.codec.binary.Base64;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,11 +27,11 @@ public class RoomResponse {
         this.roomPrice = roomPrice;
     }
 
-    public RoomResponse(Integer roomId, String roomType, BigDecimal roomPrice, boolean isBooked, String photo) {
+    public RoomResponse(Integer roomId, String roomType, BigDecimal roomPrice, boolean isBooked, byte[] photoBytes) {
         this.roomId = roomId;
         this.roomType = roomType;
         this.roomPrice = roomPrice;
         this.isBooked = isBooked;
-        this.photo = photo;
+        this.photo = photoBytes != null ? Base64.encodeBase64String(photoBytes) : null;
     }
 }

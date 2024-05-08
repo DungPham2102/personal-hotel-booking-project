@@ -7,8 +7,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<BookedRoom, Integer> {
-//    List<BookedRoom> findByRoomId(Integer roomId);
-//
-//    BookedRoom findByBookingConfirmationCode(String confirmationCode);
+
+    // bắt buộc phải đặt tên do Jpa quy định nếu để findByRoomId thì sẽ báo lỗi do nó sẽ tìm thuộc tính id trong
+    // entity Room mà ta cần tìm theo room_id
+    List<BookedRoom> findByRoomRoomId(Integer roomId);
+
+    BookedRoom findByBookingConfirmationCode(String confirmationCode);
 
 }
