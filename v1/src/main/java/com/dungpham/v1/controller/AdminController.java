@@ -39,7 +39,6 @@ import java.util.List;
 public class AdminController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
     private final RoomService roomService;
     private final BookingServiceImpl bookingService;
 
@@ -62,7 +61,16 @@ public class AdminController {
     }
 
     // hiện ra user theo tên
-    @GetMapping(params = "name")
+//    @GetMapping(params = "name")
+//    public ResponseEntity<Page<User>> getUserByName(@RequestParam String name,
+//                                                    @RequestParam(defaultValue = "0") int page,
+//                                                    @RequestParam(defaultValue = "10") int size) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<User> users = userService.getUserByName(name, pageable);
+//        return ResponseEntity.ok(users);
+//    }
+
+    @GetMapping("/user")
     public ResponseEntity<Page<User>> getUserByName(@RequestParam String name,
                                                     @RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "10") int size) {

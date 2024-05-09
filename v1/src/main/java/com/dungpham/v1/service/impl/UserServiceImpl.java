@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Integer id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with id " + id));
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id " + id));
     }
 
     @Override
@@ -87,6 +87,17 @@ public class UserServiceImpl implements UserService {
         newUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userRepository.save(newUser);
         return ResponseEntity.ok(user);
+    }
+
+    @Override
+    public Page<User> getAllCustomer(Pageable pageable) {
+        return userRepository.getAllCustomer(pageable);
+    }
+
+    @Override
+    public User getCustomerById(Integer id) {
+        return userRepository.findCustomerById(id).orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
+
     }
 
 }
