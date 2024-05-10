@@ -17,12 +17,16 @@ public class EmployeeController {
 
     private final UserService userService;
 
-    // hiện ra tất cả customer
+    // CÁC FUNCTION LIÊN QUAN TỚI USER
+
+    // hiện ra tất cả customer hoặc theo tên
     @GetMapping("/customers")
-    public ResponseEntity<Page<User>> getAllCustomer(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<User>> getCustomerByName(@RequestParam(defaultValue = "") String name,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userService.getAllCustomer(pageable);
+
+        Page<User> users = userService.findCustomerByFirstName(name, pageable);
         return ResponseEntity.ok(users);
     }
 
@@ -32,13 +36,17 @@ public class EmployeeController {
         return ResponseEntity.ok(userService.getCustomerById(id));
     }
 
-    @GetMapping(params = "name")
-    public ResponseEntity<Page<User>> getUserByName(@RequestParam String name,
-                                                    @RequestParam(defaultValue = "0") int page,
-                                                    @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userService.getUserByName(name, pageable);
-        return ResponseEntity.ok(users);
+    // update user
+    @PutMapping("/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
     }
+
+
+
+    // CÁC FUNCTION LIÊN QUAN TỚI ROOM
+
+
+
 
 }

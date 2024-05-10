@@ -28,4 +28,6 @@ public interface UserService {
     User getCustomerById(Integer id);
 
 
+    Page<User> findCustomerByFirstName(String name, Pageable pageable);
+
 }

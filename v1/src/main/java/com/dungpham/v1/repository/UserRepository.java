@@ -26,4 +26,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 
     @Query(value = "SELECT * FROM user WHERE role = 0 AND user_id = %:id%", nativeQuery = true)
     Optional<User> findCustomerById(Integer id);
+
+    @Query(value = "SELECT * FROM user WHERE first_name LIKE %:name% AND role = 0", nativeQuery = true)
+    Page<User> findCustomerByFirstName(String name, Pageable pageable);
 }

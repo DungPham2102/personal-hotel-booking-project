@@ -45,12 +45,13 @@ public class AdminController {
 
     // CÁC FUNCTION LIÊN QUAN TỚI USER
 
-    // hiện ra tất cả user
+    // hiện ra tất cả user hoặc theo tên
     @GetMapping("/users")
-    public ResponseEntity<Page<User>> getAllUsers(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<User>> getUserByName(@RequestParam(defaultValue = "") String name,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userService.getAllUsers(pageable);
+        Page<User> users = userService.getUserByName(name, pageable);
         return ResponseEntity.ok(users);
     }
 
@@ -58,25 +59,6 @@ public class AdminController {
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         return ResponseEntity.ok(userService.getUserById(id));
-    }
-
-    // hiện ra user theo tên
-//    @GetMapping(params = "name")
-//    public ResponseEntity<Page<User>> getUserByName(@RequestParam String name,
-//                                                    @RequestParam(defaultValue = "0") int page,
-//                                                    @RequestParam(defaultValue = "10") int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<User> users = userService.getUserByName(name, pageable);
-//        return ResponseEntity.ok(users);
-//    }
-
-    @GetMapping("/user")
-    public ResponseEntity<Page<User>> getUserByName(@RequestParam String name,
-                                                    @RequestParam(defaultValue = "0") int page,
-                                                    @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userService.getUserByName(name, pageable);
-        return ResponseEntity.ok(users);
     }
 
     // update user
@@ -92,13 +74,11 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
-
     // add Employee
     @PostMapping("/add-employee")
     public ResponseEntity<SignUpRequest> addEmployee(@RequestBody SignUpRequest user) {
         return userService.addEmployee(user);
     }
-
 
     // CÁC FUNCTION LIÊN QUAN TỚI ROOM
 
