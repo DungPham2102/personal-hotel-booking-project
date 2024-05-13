@@ -38,6 +38,13 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    // constructor này phục vụ cho việc update user do chỉ có thể update first name, last name, password
+    public User(String firstName, String lastName, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+    }
+
     // method này là để lấy ra role của user đó
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
                 if (existingUser.getRole().equals(Role.CUSTOMER) || existingUser.getUserId() == caller.getUserId()) {
                     existingUser.setFirstName(user.getFirstName());
                     existingUser.setLastName(user.getLastName());
-                    existingUser.setEmail(user.getEmail());
+                    existingUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
                     return userRepository.save(existingUser);
                 } else {
                     throw new RuntimeException("You are not authorized to update this user");
@@ -74,14 +74,14 @@ public class UserServiceImpl implements UserService {
             case "ADMIN":
                 existingUser.setFirstName(user.getFirstName());
                 existingUser.setLastName(user.getLastName());
-                existingUser.setEmail(user.getEmail());
+                existingUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
                 return userRepository.save(existingUser);
 
             case "CUSTOMER":
                 if (existingUser.getUserId() == caller.getUserId()) {
                     existingUser.setFirstName(user.getFirstName());
                     existingUser.setLastName(user.getLastName());
-                    existingUser.setEmail(user.getEmail());
+                    existingUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
                     return userRepository.save(existingUser);
                 } else {
                     throw new RuntimeException("You are not authorized to update this user");
