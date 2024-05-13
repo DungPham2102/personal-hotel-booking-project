@@ -30,4 +30,5 @@ public interface UserService {
 
     Page<User> findCustomerByFirstName(String name, Pageable pageable);
 
+//    User getCustomerInfo();
 }
