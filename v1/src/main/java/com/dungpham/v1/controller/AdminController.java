@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -67,7 +68,7 @@ public class AdminController {
         return ResponseEntity.ok(userService.updateUser(id, user));
     }
 
-    // xóa user
+    // delete user
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
@@ -99,6 +100,23 @@ public class AdminController {
         return ResponseEntity.ok(roomResponses);
     }
 
+    // hiện ra room theo id
+    @GetMapping("/rooms/{roomId}")
+    public ResponseEntity<Optional<RoomResponse>> getRoomById(@PathVariable Integer roomId) throws ResourceNotFoundException {
+        Optional<Room> theRoom = roomService.getRoomById(roomId);
+        return theRoom.map(room -> {
+            RoomResponse roomResponse = getRoomResponse(room);
+            return ResponseEntity.ok(Optional.of(roomResponse));
+        }).orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+
+    }
+
+    // hiện ra tất cả room type
+    @GetMapping("/room-types")
+    public List<String> getRoomTypes(){
+        return roomService.getAllRoomTypes();
+    }
+
     // add Room
     @PostMapping("/rooms")
     public ResponseEntity<RoomResponse> addNewRoom(
@@ -111,11 +129,11 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    // xóa 1 room theo id
+    // delete 1 room theo id
     @DeleteMapping("/rooms/{roomId}")
     public ResponseEntity<Void> deleteRoom(@PathVariable Integer roomId) {
         roomService.deleteRoom(roomId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok().build();
     }
 
     // update 1 room theo id
@@ -134,17 +152,6 @@ public class AdminController {
         RoomResponse roomResponse = getRoomResponse(theRoom);
         return ResponseEntity.ok(roomResponse);
     }
-
-    // hiện ra tất cả room type
-    @GetMapping("/room-types")
-    public List<String> getRoomTypes(){
-        return roomService.getAllRoomTypes();
-    }
-
-
-
-
-
 
 
 
