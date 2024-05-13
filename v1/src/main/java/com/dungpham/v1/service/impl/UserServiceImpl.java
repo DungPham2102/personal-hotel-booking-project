@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +26,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
 
     @Override
     public UserDetailsService userDetailsService() {
@@ -43,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Integer id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with id " + id));
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id " + id));
     }
 
     @Override
@@ -53,11 +56,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(Integer id, User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User caller = (User) authentication.getPrincipal();
         var existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id " + id));
-        existingUser.setFirstName(user.getFirstName());
-        existingUser.setLastName(user.getLastName());
-        existingUser.setEmail(user.getEmail());
-        return userRepository.save(existingUser);
+
+        switch (caller.getRole().name()) {
+            case "EMPLOYEE":
+                if (existingUser.getRole().equals(Role.CUSTOMER) || existingUser.getUserId() == caller.getUserId()) {
+                    existingUser.setFirstName(user.getFirstName());
+                    existingUser.setLastName(user.getLastName());
+                    existingUser.setEmail(user.getEmail());
+                    return userRepository.save(existingUser);
+                } else {
+                    throw new RuntimeException("You are not authorized to update this user");
+                }
+
+            case "ADMIN":
+                existingUser.setFirstName(user.getFirstName());
+                existingUser.setLastName(user.getLastName());
+                existingUser.setEmail(user.getEmail());
+                return userRepository.save(existingUser);
+
+            case "CUSTOMER":
+                if (existingUser.getUserId() == caller.getUserId()) {
+                    existingUser.setFirstName(user.getFirstName());
+                    existingUser.setLastName(user.getLastName());
+                    existingUser.setEmail(user.getEmail());
+                    return userRepository.save(existingUser);
+                } else {
+                    throw new RuntimeException("You are not authorized to update this user");
+                }
+default:
+                throw new RuntimeException("You are not authorized to update this user");
+        }
     }
 
     @Override
@@ -87,6 +118,22 @@ public class UserServiceImpl implements UserService {
         newUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userRepository.save(newUser);
         return ResponseEntity.ok(user);
+    }
+
+    @Override
+    public Page<User> getAllCustomer(Pageable pageable) {
+        return userRepository.getAllCustomer(pageable);
+    }
+
+    @Override
+    public User getCustomerById(Integer id) {
+        return userRepository.findCustomerById(id).orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
+
+    }
+
+    @Override
+    public Page<User> findCustomerByFirstName(String name, Pageable pageable) {
+        return userRepository.findCustomerByFirstName(name, pageable);
     }
 
 }

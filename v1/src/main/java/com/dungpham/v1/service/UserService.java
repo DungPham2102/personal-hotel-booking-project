@@ -23,4 +23,11 @@ public interface UserService {
 
     ResponseEntity addEmployee(SignUpRequest user);
 
+    Page<User> getAllCustomer(Pageable pageable);
+
+    User getCustomerById(Integer id);
+
+
+    Page<User> findCustomerByFirstName(String name, Pageable pageable);
+
 }

@@ -1,6 +1,7 @@
 package com.dungpham.v1.controller;
 
 import com.dungpham.v1.entity.User;
+import com.dungpham.v1.repository.UserRepository;
 import com.dungpham.v1.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,30 +17,36 @@ public class EmployeeController {
 
     private final UserService userService;
 
-    // hiện ra tất cả user
-    @GetMapping
-    public ResponseEntity<Page<User>> getAllUsers(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userService.getAllUsers(pageable);
-        return ResponseEntity.ok(users);
-    }
+    // CÁC FUNCTION LIÊN QUAN TỚI USER
 
-    // hiện ra user theo id
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
-
-    @GetMapping(params = "name")
-    public ResponseEntity<Page<User>> getUserByName(@RequestParam String name,
+    // hiện ra tất cả customer hoặc theo tên
+    @GetMapping("/customers")
+    public ResponseEntity<Page<User>> getCustomerByName(@RequestParam(defaultValue = "") String name,
                                                     @RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userService.getUserByName(name, pageable);
+
+        Page<User> users = userService.findCustomerByFirstName(name, pageable);
         return ResponseEntity.ok(users);
     }
 
-    // update và delete ở phía admin controller
+    // hiện ra customer theo id
+    @GetMapping("/customers/{id}")
+    public ResponseEntity<User> getCustomerById(@PathVariable Integer id) {
+        return ResponseEntity.ok(userService.getCustomerById(id));
+    }
+
+    // update user
+    @PutMapping("/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
+
+
+    // CÁC FUNCTION LIÊN QUAN TỚI ROOM
+
+
+
 
 }
