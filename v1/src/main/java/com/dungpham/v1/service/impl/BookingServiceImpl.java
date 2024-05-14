@@ -2,11 +2,14 @@ package com.dungpham.v1.service.impl;
 
 import com.dungpham.v1.entity.BookedRoom;
 import com.dungpham.v1.entity.Room;
+import com.dungpham.v1.entity.User;
 import com.dungpham.v1.exception.InvalidBookingRequestException;
 import com.dungpham.v1.repository.BookingRepository;
 import com.dungpham.v1.service.BookingService;
 import com.dungpham.v1.service.RoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +36,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public String saveBooking(Integer roomId, BookedRoom bookingRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User caller = (User) authentication.getPrincipal();
+        bookingRequest.setUser(caller);
+
         if(bookingRequest.getCheckOutDate().isBefore(bookingRequest.getCheckInDate())){
             throw new InvalidBookingRequestException("Check out date cannot be before check in date");
         }
