@@ -1,10 +1,9 @@
 package com.dungpham.v1.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.NotFound;
 
 import java.time.LocalDate;
 
@@ -13,6 +12,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class BookedRoom {
 
     @Id
@@ -36,8 +36,15 @@ public class BookedRoom {
     private Room room;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "guest_id")
+    @JoinColumn(name = "guest_id", nullable = false)
     private User user;
+
+    public BookedRoom(LocalDate checkInDate, LocalDate checkOutDate, int totalNumOfGuest, String bookingConfirmationCode) {
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.totalNumOfGuest = totalNumOfGuest;
+        this.bookingConfirmationCode = bookingConfirmationCode;
+    }
 
     public void setBookingConfirmationCode(String bookingConfirmationCode) {
         this.bookingConfirmationCode = bookingConfirmationCode;

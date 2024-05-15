@@ -3,9 +3,10 @@ package com.dungpham.v1.controller;
 import com.dungpham.v1.entity.BookedRoom;
 import com.dungpham.v1.entity.Room;
 import com.dungpham.v1.entity.User;
+import com.dungpham.v1.exception.InvalidBookingRequestException;
 import com.dungpham.v1.exception.PhotoRetrievalException;
 import com.dungpham.v1.exception.ResourceNotFoundException;
-import com.dungpham.v1.repository.UserRepository;
+import com.dungpham.v1.response.BookingResponse;
 import com.dungpham.v1.response.RoomResponse;
 import com.dungpham.v1.service.RoomService;
 import com.dungpham.v1.service.UserService;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -105,6 +107,54 @@ public class EmployeeController {
 
 
 
+    // CÁC FUNCTION LIÊN QUAN TỚI BOOKING
+
+    // hiện ra tất cả các booking order
+    @GetMapping("/bookings")
+    public ResponseEntity<List<BookingResponse>> getAllBookings() {
+        List<BookedRoom> bookings = bookingService.getAllBookings();
+        List<BookingResponse> bookingResponses = new ArrayList<>();
+        for(BookedRoom booking : bookings){
+            BookingResponse bookingResponse = getBookingResponse(booking);
+            bookingResponses.add(bookingResponse);
+        }
+        return ResponseEntity.ok(bookingResponses);
+    }
+
+    // hiện ra booking theo confirmation code
+    @GetMapping("/bookings/{confirmationCode}")
+    public ResponseEntity<?> getBookingByConfirmationCode( @PathVariable String confirmationCode) {
+        try{
+            BookedRoom booking = bookingService.findByBookingConfirmationCode(confirmationCode);
+            BookingResponse bookingResponse = getBookingResponse(booking);
+            return ResponseEntity.ok(bookingResponse);
+        }catch(ResourceNotFoundException ex){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+
+        }
+    }
+
+    // tạo một booking order, với tham số path truyền vào là roomId
+    // trong body này chỉ cần truyền 4 trường là checkInDate, checkOutDate, totalNumOfGuest, bookingConfirmationCode
+    @PostMapping("/bookings/{roomId}")
+    public ResponseEntity<?> saveBooking(@PathVariable Integer roomId,
+                                         @RequestBody BookedRoom bookingRequest){
+        try{
+            String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
+            return ResponseEntity.ok("Room booked successfully. Confirmation code: " + confirmationCode);
+        }catch(InvalidBookingRequestException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+
+        }
+    }
+
+    // delete booking order
+    @DeleteMapping("/bookings/{bookingId}")
+    public void cancelBooking(@PathVariable Integer bookingId){
+        bookingService.cancelBooking(bookingId);
+    }
+
+
 
     // CÁC FUNCTION HỖ TRỢ CÁC FUNCTION TRÊN
 
@@ -135,5 +185,18 @@ public class EmployeeController {
         return bookingService.getAllBookingsByRoomId(roomId);
     }
 
+
+    private BookingResponse getBookingResponse(BookedRoom booking) {
+        Room theRoom = roomService.getRoomById(booking.getRoom().getRoomId()).get();
+        User user = booking.getUser();
+        RoomResponse room = new RoomResponse(theRoom.getRoomId(),
+                theRoom.getRoomType(),
+                theRoom.getRoomPrice());
+        return new BookingResponse(booking.getBookingId(),
+                booking.getCheckInDate(),
+                booking.getCheckOutDate(),
+                booking.getTotalNumOfGuest(),
+                booking.getBookingConfirmationCode(), room, user);
+    }
 
 }
