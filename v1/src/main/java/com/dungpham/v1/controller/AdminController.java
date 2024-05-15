@@ -14,11 +14,18 @@ import com.dungpham.v1.service.BookingService;
 import com.dungpham.v1.service.RoomService;
 import com.dungpham.v1.service.UserService;
 import com.dungpham.v1.service.impl.BookingServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -118,11 +125,20 @@ public class AdminController {
     }
 
     // add Room
-    @PostMapping("/rooms")
+
+    @PostMapping(value = "/rooms", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Add a new room", description = "Add a new room with photo, type and price")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Room added successfully", content = @Content(schema = @Schema(implementation = RoomResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
     public ResponseEntity<RoomResponse> addNewRoom(
+            @Parameter(description = "Room photo", required = true)
             @RequestParam("photo") MultipartFile photo,
-            @RequestParam("roomType")String roomType,
-            @RequestParam("roomPrice")BigDecimal roomPrice) throws SQLException, IOException {
+            @Parameter(description = "Room type", required = true)
+            @RequestParam("roomType") String roomType,
+            @Parameter(description = "Room price", required = true)
+            @RequestParam("roomPrice") BigDecimal roomPrice) throws SQLException, IOException {
         Room savedRoom = roomService.addNewRoom(photo, roomType, roomPrice);
         RoomResponse response = new RoomResponse(savedRoom.getRoomId(),
                 savedRoom.getRoomType(), savedRoom.getRoomPrice());
