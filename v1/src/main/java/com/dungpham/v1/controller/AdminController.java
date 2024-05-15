@@ -153,11 +153,19 @@ public class AdminController {
     }
 
     // update 1 room theo id
-    @PutMapping("/rooms/{roomId}")
+    @PutMapping(value = "/rooms/{roomId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Update a new room", description = "Update a new room with photo, type and price")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Room updated successfully", content = @Content(schema = @Schema(implementation = RoomResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
     public ResponseEntity<RoomResponse> updateRoom(@PathVariable Integer roomId,
-                                                   @RequestParam(required = false) String roomType,
-                                                   @RequestParam(required = false) BigDecimal roomPrice,
-                                                   @RequestParam(required = false) MultipartFile photo) throws IOException, SQLException, ResourceNotFoundException {
+                                                   @Parameter(description = "Room photo", required = true)
+                                                   @RequestParam("photo") MultipartFile photo,
+                                                   @Parameter(description = "Room type", required = true)
+                                                       @RequestParam("roomType") String roomType,
+                                                   @Parameter(description = "Room price", required = true)
+                                                       @RequestParam("roomPrice") BigDecimal roomPrice) throws IOException, SQLException, ResourceNotFoundException {
 
         byte[] photoBytes = photo != null && !photo.isEmpty() ?
                 photo.getBytes() : roomService.getRoomPhotoByRoomId(roomId);
