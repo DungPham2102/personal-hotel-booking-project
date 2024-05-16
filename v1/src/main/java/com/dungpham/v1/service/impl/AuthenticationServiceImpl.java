@@ -11,6 +11,7 @@ import com.dungpham.v1.repository.UserRepository;
 import com.dungpham.v1.service.AuthenticationService;
 import com.dungpham.v1.service.JWTService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,8 +51,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         var user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(() -> new RuntimeException("Invalid Email or Password!"));
         var jwt = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
+//        var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
 
+        ResponseCookie cookie = ResponseCookie.from("key", jwt)
+                .maxAge(3600*24)
+                .path("/")
+                .build();
 
         JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
         jwtAuthenticationResponse.setToken(jwt);

@@ -7,6 +7,8 @@ import com.dungpham.v1.repository.UserRepository;
 import com.dungpham.v1.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,8 +42,18 @@ public class AuthenticationController {
     @PostMapping("/signin")
     @Operation(summary = "Sign in")
     public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest){
-        return ResponseEntity.ok(authenticationService.signin(signinRequest));
+        var jwt = authenticationService.signin(signinRequest).getToken();
+
+        ResponseCookie cookie = ResponseCookie.from("key", jwt)
+                .maxAge(3600*24)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(authenticationService.signin(signinRequest));
     }
+
 
 //    @PostMapping("/refresh")
 //    public ResponseEntity<JwtAuthenticationResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest){
