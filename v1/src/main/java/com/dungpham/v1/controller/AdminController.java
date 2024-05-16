@@ -54,6 +54,7 @@ public class AdminController {
     // CÁC FUNCTION LIÊN QUAN TỚI USER
 
     // hiện ra tất cả user hoặc theo tên
+    @Operation(summary = "Get a user by first name")
     @GetMapping("/users")
     public ResponseEntity<Page<User>> getUserByName(@RequestParam(defaultValue = "") String name,
                                                     @RequestParam(defaultValue = "0") int page,
@@ -64,18 +65,21 @@ public class AdminController {
     }
 
     // hiện ra user theo id
+    @Operation(summary = "Get a user by id")
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     // update user
+    @Operation(summary = "Update a user info by id")
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User user) {
         return ResponseEntity.ok(userService.updateUser(id, user));
     }
 
     // delete user
+    @Operation(summary = "Delete a user by id")
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
@@ -83,6 +87,7 @@ public class AdminController {
     }
 
     // add Employee
+    @Operation(summary = "Add a new employee")
     @PostMapping("/add-employee")
     public ResponseEntity<SignUpRequest> addEmployee(@RequestBody SignUpRequest user) {
         return userService.addEmployee(user);
@@ -91,6 +96,7 @@ public class AdminController {
     // CÁC FUNCTION LIÊN QUAN TỚI ROOM
 
     // hiện ra tất cả room
+    @Operation(summary = "Get all rooms")
     @GetMapping("/rooms")
     public ResponseEntity<List<RoomResponse>> getAllRooms() throws SQLException, ResourceNotFoundException {
         List<Room> rooms = roomService.getAllRooms();
@@ -108,6 +114,7 @@ public class AdminController {
     }
 
     // hiện ra room theo id
+    @Operation(summary = "Get a room by id")
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<Optional<RoomResponse>> getRoomById(@PathVariable Integer roomId) throws ResourceNotFoundException {
         Optional<Room> theRoom = roomService.getRoomById(roomId);
@@ -119,13 +126,13 @@ public class AdminController {
     }
 
     // hiện ra tất cả room type
+    @Operation(summary = "Get all room types")
     @GetMapping("/room-types")
     public List<String> getRoomTypes(){
         return roomService.getAllRoomTypes();
     }
 
     // add Room
-
     @PostMapping(value = "/rooms", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Add a new room", description = "Add a new room with photo, type and price")
     @ApiResponses(value = {
@@ -146,6 +153,7 @@ public class AdminController {
     }
 
     // delete 1 room theo id
+    @Operation(summary = "Delete a room by id")
     @DeleteMapping("/rooms/{roomId}")
     public ResponseEntity<Void> deleteRoom(@PathVariable Integer roomId) {
         roomService.deleteRoom(roomId);

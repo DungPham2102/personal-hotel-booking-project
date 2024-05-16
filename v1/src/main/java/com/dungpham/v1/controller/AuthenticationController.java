@@ -5,6 +5,7 @@ import com.dungpham.v1.dto.*;
 import com.dungpham.v1.entity.User;
 import com.dungpham.v1.repository.UserRepository;
 import com.dungpham.v1.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ public class AuthenticationController {
     private final UserRepository userRepository;
 
     // đăng ký tài khoản Customer
+    @Operation(summary = "Sign up a new customer account")
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest){
         // Kiểm tra xem email đã tồn tại trong hệ thống chưa
@@ -36,13 +38,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signin")
+    @Operation(summary = "Sign in")
     public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest){
         return ResponseEntity.ok(authenticationService.signin(signinRequest));
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<JwtAuthenticationResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest){
-        return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenRequest));
-    }
+//    @PostMapping("/refresh")
+//    public ResponseEntity<JwtAuthenticationResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest){
+//        return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenRequest));
+//    }
 
 }

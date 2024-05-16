@@ -55,24 +55,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
         jwtAuthenticationResponse.setToken(jwt);
-        //jwtAuthenticationResponse.setRefreshToken(refreshToken);
+//        jwtAuthenticationResponse.setRefreshToken(refreshToken);
         return jwtAuthenticationResponse;
     }
 
-    public JwtAuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest){
-        String userEmail = jwtService.extractUserName(refreshTokenRequest.getToken());
-        System.out.println("just test a little bit: " + userEmail);
-        User user = userRepository.findByEmail(userEmail).orElseThrow();
-        if(jwtService.isTokenValid(refreshTokenRequest.getToken(), user)){
-            var jwt = jwtService.generateToken(user);
-
-            JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
-
-            //jwtAuthenticationResponse.setToken(jwt);
-            jwtAuthenticationResponse.setRefreshToken(refreshTokenRequest.getToken());
-            return jwtAuthenticationResponse;
-        }
-        return null;
-    }
+//    public JwtAuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest){
+//        String userEmail = jwtService.extractUserName(refreshTokenRequest.getToken());
+//        System.out.println("just test a little bit: " + userEmail);
+//        User user = userRepository.findByEmail(userEmail).orElseThrow();
+//        if(jwtService.isTokenValid(refreshTokenRequest.getToken(), user)){
+//            var jwt = jwtService.generateToken(user);
+//
+//            JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+//
+//            //jwtAuthenticationResponse.setToken(jwt);
+//            jwtAuthenticationResponse.setRefreshToken(refreshTokenRequest.getToken());
+//            return jwtAuthenticationResponse;
+//        }
+//        return null;
+//    }
 
 }

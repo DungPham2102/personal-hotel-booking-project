@@ -12,6 +12,7 @@ import com.dungpham.v1.response.RoomResponse;
 import com.dungpham.v1.service.RoomService;
 import com.dungpham.v1.service.UserService;
 import com.dungpham.v1.service.impl.BookingServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,7 @@ public class CustomerController {
     // CÁC FUNCTION LIÊN QUAN TỚI USER
 
     // hiện ra thông tin của bản thân
+    @Operation(summary = "Get info of the current user")
     @GetMapping()
     public ResponseEntity<User> getCustomerInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -46,6 +48,7 @@ public class CustomerController {
     }
 
     // customer tự update thông tin của mình
+    @Operation(summary = "Update info of the current user")
     @PutMapping()
     public ResponseEntity<User> updateUser(Integer id ,@RequestBody User user) {
 
@@ -61,6 +64,7 @@ public class CustomerController {
     // CÁC FUNCTION LIÊN QUAN TỚI ROOM
 
     // hiện ra tất cả room
+    @Operation(summary = "Get all rooms")
     @GetMapping("/rooms")
     public ResponseEntity<List<RoomResponse>> getAllRooms() throws SQLException, ResourceNotFoundException {
         List<Room> rooms = roomService.getAllRooms();
@@ -78,6 +82,7 @@ public class CustomerController {
     }
 
     // hiện ra room theo id
+    @Operation(summary = "Get a room by id")
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<Optional<RoomResponse>> getRoomById(@PathVariable Integer roomId) throws ResourceNotFoundException {
         Optional<Room> theRoom = roomService.getRoomById(roomId);
@@ -89,6 +94,7 @@ public class CustomerController {
     }
 
     // hiện ra tất cả room type
+    @Operation(summary = "Get all room types")
     @GetMapping("/room-types")
     public List<String> getRoomTypes(){
         return roomService.getAllRoomTypes();
@@ -99,6 +105,7 @@ public class CustomerController {
 
     // CÁC FUNCTION LIÊN QUAN TỚI BOOKING
     // hiện ra tất cả các booking order
+    @Operation(summary = "Get all bookings of the current user")
     @GetMapping("/bookings")
     public ResponseEntity<List<BookingResponse>> getAllBookings() {
         // lấy thông tin của người dùng hiện tại
@@ -119,6 +126,7 @@ public class CustomerController {
     }
 
     // hiện ra booking theo confirmation code
+    @Operation(summary = "Get a booking by confirmation code")
     @GetMapping("/bookings/{confirmationCode}")
     public ResponseEntity<?> getBookingByConfirmationCode( @PathVariable String confirmationCode) {
         // lấy thông tin của người dùng hiện tại
@@ -142,6 +150,7 @@ public class CustomerController {
 
     // tạo một booking order, với tham số path truyền vào là roomId
     // trong body này chỉ cần truyền 4 trường là checkInDate, checkOutDate, totalNumOfGuest, bookingConfirmationCode
+    @Operation(summary = "Create a booking order")
     @PostMapping("/bookings/{roomId}")
     public ResponseEntity<?> saveBooking(@PathVariable Integer roomId,
                                          @RequestBody BookedRoom bookingRequest){
@@ -156,6 +165,7 @@ public class CustomerController {
 
 
     // delete booking order with confirmation code, customer chỉ có thể xóa booking order của mình
+    @Operation(summary = "Delete a booking order of the current user")
     @DeleteMapping("/bookings/{confirmationCode}")
     public void cancelBooking(@PathVariable String confirmationCode){
         // lấy thông tin của người dùng hiện tại
