@@ -11,6 +11,7 @@ import com.dungpham.v1.response.RoomResponse;
 import com.dungpham.v1.service.RoomService;
 import com.dungpham.v1.service.UserService;
 import com.dungpham.v1.service.impl.BookingServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +39,7 @@ public class EmployeeController {
     // CÁC FUNCTION LIÊN QUAN TỚI USER
 
     // hiện ra tất cả customer hoặc theo tên
+    @Operation(summary = "Get a customer by first name")
     @GetMapping("/customers")
     public ResponseEntity<Page<User>> getCustomerByName(@RequestParam(defaultValue = "") String name,
                                                     @RequestParam(defaultValue = "0") int page,
@@ -49,18 +51,21 @@ public class EmployeeController {
     }
 
     // hiện ra customer theo id
+    @Operation(summary = "Get a customer by id")
     @GetMapping("/customers/{id}")
     public ResponseEntity<User> getCustomerById(@PathVariable Integer id) {
         return ResponseEntity.ok(userService.getCustomerById(id));
     }
 
     // update customer
+    @Operation(summary = "Update a customer by id")
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User user) {
         return ResponseEntity.ok(userService.updateUser(id, user));
     }
 
     // delete customer
+    @Operation(summary = "Delete a customer by id")
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
@@ -72,6 +77,7 @@ public class EmployeeController {
     // CÁC FUNCTION LIÊN QUAN TỚI ROOM
 
     // hiện ra tất cả room
+    @Operation(summary = "Get all rooms")
     @GetMapping("/rooms")
     public ResponseEntity<List<RoomResponse>> getAllRooms() throws SQLException, ResourceNotFoundException {
         List<Room> rooms = roomService.getAllRooms();
@@ -89,6 +95,7 @@ public class EmployeeController {
     }
 
     // hiện ra room theo id
+    @Operation(summary = "Get a room by id")
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<Optional<RoomResponse>> getRoomById(@PathVariable Integer roomId) throws ResourceNotFoundException {
         Optional<Room> theRoom = roomService.getRoomById(roomId);
@@ -100,6 +107,7 @@ public class EmployeeController {
     }
 
     // hiện ra tất cả room type
+    @Operation(summary = "Get all room types")
     @GetMapping("/room-types")
     public List<String> getRoomTypes(){
         return roomService.getAllRoomTypes();
@@ -110,6 +118,7 @@ public class EmployeeController {
     // CÁC FUNCTION LIÊN QUAN TỚI BOOKING
 
     // hiện ra tất cả các booking order
+    @Operation(summary = "Get all bookings")
     @GetMapping("/bookings")
     public ResponseEntity<List<BookingResponse>> getAllBookings() {
         List<BookedRoom> bookings = bookingService.getAllBookings();
@@ -122,6 +131,7 @@ public class EmployeeController {
     }
 
     // hiện ra booking theo confirmation code
+    @Operation(summary = "Get a booking by confirmation code")
     @GetMapping("/bookings/{confirmationCode}")
     public ResponseEntity<?> getBookingByConfirmationCode( @PathVariable String confirmationCode) {
         try{
@@ -136,6 +146,7 @@ public class EmployeeController {
 
     // tạo một booking order, với tham số path truyền vào là roomId
     // trong body này chỉ cần truyền 4 trường là checkInDate, checkOutDate, totalNumOfGuest, bookingConfirmationCode
+    @Operation(summary = "Save a booking order")
     @PostMapping("/bookings/{roomId}")
     public ResponseEntity<?> saveBooking(@PathVariable Integer roomId,
                                          @RequestBody BookedRoom bookingRequest){
@@ -149,6 +160,7 @@ public class EmployeeController {
     }
 
     // delete booking order
+    @Operation(summary = "Delete a booking order")
     @DeleteMapping("/bookings/{bookingId}")
     public void cancelBooking(@PathVariable Integer bookingId){
         bookingService.cancelBooking(bookingId);
