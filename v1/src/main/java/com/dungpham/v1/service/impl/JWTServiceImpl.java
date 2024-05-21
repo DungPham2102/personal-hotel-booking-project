@@ -18,8 +18,7 @@ import java.util.function.Function;
 @Service
 public class JWTServiceImpl implements JWTService {
 
-    @Value("${jwtSecret.token}")
-    private String privateKey;
+    private String privateKey = "413F442847284862506553685660597033733676397924422645294840406351";
 
 
     public String generateToken(UserDetails userDetails) {
